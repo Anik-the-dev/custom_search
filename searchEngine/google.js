@@ -1,7 +1,7 @@
 require('dotenv').config()
 const fetchGoogleData = async (query, startIndex) => {
     try {
-      const cxId = process.env.GOOGLE_CX;
+      const cxId =process.env.GOOGLE_CX;
       const apiKey =process.env.GOOGLE_API_KEY;
       const response = await fetch(
         `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cxId}&q=${query}&start=${startIndex}`

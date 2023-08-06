@@ -1,8 +1,8 @@
 require('dotenv').config()
 const fetchBingData = async (query, startIndex) => {
     try {
-      const apiKey = process.env.BING_API_KEY;
-      const response = await fetch(
+        const apiKey =process.env.BING_API_KEY;
+        const response = await fetch(
         `https://api.bing.microsoft.com/v7.0/search?q=${query}&count=${startIndex}`,
         {
           headers: {

@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const xss = require("xss");
+
 const app = express();
 const PORT = 4000;
 
@@ -10,9 +12,13 @@ const fetchBingData = require('./searchEngine/bing')
 app.use(express.json());
 app.use(cors());
 
+
 app.post('/search', async (req, res) => {
-    console.log(req.body)
-  const query = req.body.query; 
+  const query = sanitizeInput(req.body.query); 
+  console.log("query",query);
+  if (!isValidQuery(query)) {
+    return res.status(400).json({ error: 'Invalid characters in the query. Only alphanumeric characters are allowed.' });
+  }
 
   let startIndex = 0;
   const allGoogleResults = [];
@@ -32,14 +38,23 @@ app.post('/search', async (req, res) => {
 
 // remove duplicates
 const deduplicatedResults = removeDuplicates(secureResults);
-console.log("dedup:",deduplicatedResults);
-
   res.json(deduplicatedResults);
 })
 
 // Middleware to check HTTPS
 function checkHTTPS(url) {
     return url.startsWith('https://');
+}
+
+// remove scripts
+function sanitizeInput(input) {
+    return xss(input);
+}
+
+// Only allow alpha-numeric
+function isValidQuery(query) {
+    const alphanumericRegex = /^[a-zA-Z0-9]+$/;
+    return alphanumericRegex.test(query);
   }
   
 
