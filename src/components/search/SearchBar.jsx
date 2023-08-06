@@ -6,6 +6,7 @@ const SearchBar = () => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
 
   const handleInputChange = (event) => {
@@ -19,6 +20,8 @@ const SearchBar = () => {
   const handleSearch = async () => {
     try {
         setLoading(true);
+        setError('')
+        setResults([])
         const encodedQuery = encodeURIComponent(query);
         const url = `http://localhost:4000/search`;
         const data = {
@@ -26,11 +29,15 @@ const SearchBar = () => {
         };
     
         const response = await axios.post(url, data);
+        console.log("response",response);
         console.log("resData",response.data);
         setLoading(false);
         setResults(response.data)
       } catch (error) {
+        setLoading(false);
         console.log("Error making POST request", error);
+        setError(error.message);
+
       }
   };
 
@@ -50,9 +57,10 @@ const SearchBar = () => {
       </button>
     </div>
     {loading && <p>Loading...</p>}
+    {error && <p style={{ color: 'red' }}>{error}</p>}
     {results && results.length > 0 && 
     <div  className="link-container">
-      <p className='link-headline'>Search Result( Secured, Unique from multiple search Engine Like Google, Bing, Duck Duck o etc.) </p>
+      <p className='link-headline'>Search Result( Secured, Unique from multiple search Engine Like Google, Bing, Duck Duck Go etc.) </p>
       {results.map((link, index) => {
           return (
               <ul key={index} className="link-list">
